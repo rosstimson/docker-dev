@@ -1,0 +1,36 @@
+## OS FLUFF
+.DS_Store
+Thumbs.db
+
+## EDITOR CRAP
+.idea
+.nbproject
+
+## TEXTMATE
+*.tmproj
+tmtags
+
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## Git merge conflict crap
+*.orig
+
+## SUBVERSION
+.svn
+
+## Rubinius
+.rbx/
+
+## MISC
+tags
+log/
+config/database.yml
+db/*.sqlite3
+.sass-cache/
+.bundle/

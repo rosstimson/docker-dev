@@ -1,0 +1,570 @@
+" Preamble ---------------------------------------------------------------- {{{
+"
+" ~/.vimrc
+" My Vim preference
+" Maintained by Ross Timson <ross@rosstimson.com>
+"
+" I like to build the latest Vim from src with the following:
+"
+"     ./configure --with-features=huge \
+"                 --prefix=/usr/local \
+"                 --with-x \
+"                 --enable-gui=yes \
+"                 --enable-perlinterp \
+"                 --enable-pythoninterp \
+"                 --enable-rubyinterp \
+"                 --enable-xim \
+"                 --enable-multibyte \
+"                 --with-tlib=ncurses \
+"                 --enable-fontset \
+"                 --enable-cscope \
+"                 --disable-tclinterp \
+"                 --disable-netbeans \
+"                 --with-compiledby="Ross Timson <ross@rosstimson.com>"
+"
+" To start vim without using this .vimrc file, use:
+"     vim -u NORC
+"
+" To start vim without loading any .vimrc or plugins, use:
+"     vim -u NONE
+"
+
+if  has('vim_starting')
+  set nocompatible  " be iMproved (MUST be first)
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
+
+" Use NeoBundle for installing / managing Vim scripts
+call neobundle#begin(expand('~/.vim/bundle/'))
+
+" }}}
+
+" Bundles ----------------------------------------------------------------- {{{
+
+" Let NeoBundle manage NeoBundle (ooh how meta)
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+let vimproc_updcmd = has('win64') ?
+    \ 'tools\\update-dll-mingw 64' : 'tools\\update-dll-mingw 32'
+execute "NeoBundle 'Shougo/vimproc.vim'," . string({
+    \ 'build' : {
+    \     'windows' : vimproc_updcmd,
+    \     'cygwin' : 'make -f make_cygwin.mak',
+    \     'mac' : 'make -f make_mac.mak',
+    \     'unix' : 'make -f make_unix.mak',
+    \    },
+    \ })
+
+" Tools
+NeoBundle 'tpope/vim-git'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-commentary'
+NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-eunuch'
+NeoBundle 'mileszs/ack.vim'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/neomru.vim'
+NeoBundle 'Shougo/neocomplete.vim'
+NeoBundle 'Shougo/neosnippet.vim'
+NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'bling/vim-airline'
+NeoBundle 'majutsushi/tagbar'
+NeoBundle 'ZoomWin'
+NeoBundle 'godlygeek/tabular'
+NeoBundle 'akiomik/git-gutter-vim'
+NeoBundle 'mbbill/undotree'
+NeoBundle 'davidhalter/jedi-vim' " Python auto-completion
+NeoBundle 'CSApprox'
+
+" Langs
+NeoBundle 'tpope/vim-markdown'
+NeoBundle 'fatih/vim-go'
+
+" Colour schemes
+NeoBundle 'vim-scripts/Colour-Sampler-Pack'
+
+" End neobundle shenanigans
+call neobundle#end()
+
+" }}}
+
+
+" Basic settings ---------------------------------------------------------- {{{
+
+filetype plugin indent on " Required! Enable detection, plugins and indenting
+NeoBundleCheck            " Installation check via Neobundle
+set number                " Show line number
+set ruler                 " Show line and column numbers
+syntax enable             " Turn on syntax highlighting
+set termencoding=utf-8    " Set term encoding to UTF-*
+set encoding=utf-8        " Set default encoding to UTF-8
+let mapleader=","         " Change leader key from \ to ,
+let maplocalleader="\\"   " Set local leader to \\
+set hidden                " Hide buffers instead of closing
+set showmatch             " Show matching parantesis
+set nrformats=            " Treat all numerals as decimals
+set nobackup              " Don't keep backup files, it's 70's style cluttering
+set noswapfile            " Don't write annoying intermediate swap files,
+                          "   who did ever restore from swap files anyway?
+set undofile              " Persistent undos
+set undodir=$HOME/.vim/undo " Where to save undo histories
+set undolevels=1000       " How many undos
+set undoreload=10000      " Number of lines to save for undo
+set viminfo='20,\"80      " Read / Write a .viminfo file, don't store more
+                          "   than 80 lines of registers
+set title                 " Change the terminal's title
+set visualbell            " Don't beep
+set t_vb=                 " Don't flash
+set noerrorbells          " Don't beep
+set showcmd               " Show (partial) command in the last line of the
+                          "   screen this also shows visual selection info
+set nomodeline            " Disable mode lines (security measure)
+set cursorline            " Underline the current line, for quick orientation
+set history=1000          " Remember more commands and search history
+set undolevels=1000       " Use many muchos levels of undo
+set scrolloff=4           " Keep 4 lines off the edges of the screen when
+                          "   scrolling
+set splitbelow            " Open horizontal splits on bottom (more natural)
+set splitright            " Open vertical splits on right (more natural)
+set colorcolumn=80        " Colour column 80 as a visual guide
+set formatprg=par         " Use Par program to format text
+set lazyredraw            " Don't update the display while executing macros
+set laststatus=2          "   tell VIM to always put a status line in, even
+                          "   if there is only one window
+set cmdheight=2           " Use a status bar that is 2 rows high
+set pastetoggle=<F2>      " When in insert mode, press <F2> to go to
+                          "   paste mode, where you can paste mass data that
+                          "   won't be autoindented
+au VimResized * :wincmd = " Resize splits when Vim is resized
+set spelllang=en_gb       " Let's use real English
+set omnifunc=syntaxcomplete#Complete
+
+set t_Co=256              " Pretty colours
+set background=dark       " Setting background to dark
+
+" Setting default colourscheme for terminal vim.  For this to look good it
+" should match the Xorg colours specified in ~/.Xresources and ~/.Xcolors
+"colorscheme Tomorrow-Night-Eighties
+
+" }}}
+
+
+" Whitespace -------------------------------------------------------------- {{{
+
+set nowrap                        " Don't wrap lines
+set tabstop=2                     " A tab is 2 spaces
+set shiftwidth=2                  " An autoindent is 2 spaces
+set expandtab                     " Use spaces, not tabs
+set list                          " Show invisible characters
+set backspace=indent,eol,start    " Backspace through everything in insert mode
+set autoindent                    " Always autoindent
+set copyindent                    " Copy previous indentation on autoindenting
+set shiftround                    " use multiple of shiftwidth when indenting
+                                  "   with '<' and '>'
+set smarttab                      " Insert tabs on start of line according to
+                                  "   shiftwidth, not tabstop
+
+" List chars
+set listchars=""            " Reset the listchars
+set listchars=tab:\ \       " a tab should display as "  ",
+                            "   trailing whitespace as "."
+set listchars+=trail:.      " show trailing spaces as dots
+set listchars+=extends:>    " The character to show in the last column when
+                            "   wrap is off and the line continues beyond the
+                            "   right of the screen
+set listchars+=precedes:<   " The character to show in the last column when
+                            "   wrap is off and the line continues beyond the
+                            "   left of the screen
+
+" }}}
+
+
+" Folding ----------------------------------------------------------------- {{{
+
+set foldenable              " Enable folding
+set foldcolumn=2            " Add a fold column
+set foldmethod=marker       " Detect triple-{ style fold markers
+set foldlevelstart=99       " Start with everything unfolded
+set foldminlines=3          " Don't fold if only a few lines
+set foldnestmax=2           " Don't nest fold too much
+
+nnoremap <Space> za         " User space to toggle folds in normal mode
+vnoremap <Space> za         " User space to toggle folds in visual mode
+nnoremap zO zCzO            " Make zO recursively open whatever top level fold
+                            "   we're in, no matter where the cursor is
+
+function! MyFoldText() " {{{
+    let line = getline(v:foldstart)
+
+    let nucolwidth = &fdc + &number * &numberwidth
+    let windowwidth = winwidth(0) - nucolwidth - 3
+    let foldedlinecount = v:foldend - v:foldstart
+
+    " expand tabs into spaces
+    let onetab = strpart('          ', 0, &tabstop)
+    let line = substitute(line, '\t', onetab, 'g')
+
+    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
+    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
+endfunction " }}}
+
+set foldtext=MyFoldText()
+
+" }}}
+
+
+" Searching --------------------------------------------------------------- {{{
+
+set hlsearch                " highlight matches
+set incsearch               " incremental searching
+set ignorecase              " searches are case insensitive...
+set smartcase               " ... unless they contain at least one capital
+
+" Keep search matches in the middle of the window and pulse the line when
+" moving to them.
+nnoremap n n:call PulseCursorLine()<cr>
+nnoremap N N:call PulseCursorLine()<cr>
+
+" }}}
+
+
+" Wild settings ----------------------------------------------------------- {{{
+
+set wildmenu            " make tab completion for files/buffers act like bash
+set wildmode=list:full  " show a list when pressing tab and complete
+                        "   first full match
+
+" Disable output and VCS files
+set wildignore+=*.o,*.out,*.obj,.git,*.rbc,*.rbo,*.class,.svn,*.gem
+
+" Disable archive files
+set wildignore+=*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz
+
+" Ignore bundler and sass cache
+set wildignore+=*/vendor/gems/*,*/vendor/cache/*,*/.bundle/*,*/.sass-cache/*
+
+" Ignore rails temporary asset caches
+set wildignore+=*/tmp/cache/assets/*/sprockets/*,*/tmp/cache/assets/*/sass/*
+
+" Disable temp and backup files
+set wildignore+=*.swp,*~,._*
+
+" }}}
+
+
+" Navigation -------------------------------------------------------------- {{{
+
+" Remap j and k to act as expected when used on long, wrapped, lines
+nnoremap j gj
+nnoremap k gk
+
+" Speed up scrolling of viewport (move 3 lines at a time instead of 1)
+nnoremap <C-e> 3<C-e>
+nnoremap <C-y> 3<C-y>
+
+" Easy window navigation (instead of ctrl-w then j it's just ctrl-j)
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" }}}
+
+" Key Mappings ------------------------------------------------------------ {{{
+
+" Quickly edit/reload the vimrc file
+nnoremap <silent> <leader>ev :e $MYVIMRC<CR>    " Edit vimrc
+nnoremap <silent> <leader>sv :so $MYVIMRC<CR>   " Reload vimrc
+
+"Remap Ctrl-C to go back to normal mode
+inoremap <C-c> <Esc>
+
+" Toggle show/hide invisible chars
+nnoremap <leader>i :set list!<cr>
+
+" Toggle line numbers
+nnoremap <leader>N :setlocal number!<cr>
+
+" Shortcut to make
+nnoremap mk :make<CR>
+
+" Quick yanking to the end of the line
+nnoremap Y y$
+
+" Yank/paste to the OS clipboard with ,y and ,p
+nnoremap <leader>y "+y
+nnoremap <leader>Y "+yy
+nnoremap <leader>p "+p
+nnoremap <leader>P "+P
+
+" Clears the search register
+nnoremap <silent> <leader>/ :nohlsearch<CR>
+
+" Quick alignment of text
+nnoremap <leader>al :left<CR>
+nnoremap <leader>ar :right<CR>
+nnoremap <leader>ac :center<CR>
+
+" Sudo to write
+cnoremap w!! w !sudo tee % >/dev/null
+
+" Jump to matching pairs easily, with Tab
+nnoremap <Tab> %
+vnoremap <Tab> %
+
+" Strip all trailing whitespace from a file, using ,W
+nnoremap <leader>W :%s/\s\+$//<CR>:let @/=''<CR>
+
+" Fugitive:
+nmap <leader>gb :Gblame<CR>
+nmap <leader>gs :Gstatus<CR>
+nmap <leader>gd :Gdiff<CR>
+nmap <leader>gl :Glog<CR>
+nmap <leader>gc :Gcommit<CR>
+nmap <leader>gp :Git push<CR>
+
+" Tagbar: Mapping F8 to toggle Tagbar
+nnoremap <F8> :TagbarToggle<CR>
+
+" Ack: Mapping ,a to :Ack for searching (actually uses the_silver_searcher)
+nnoremap <leader>a :Ack<space>
+
+" Undotree: Mapping ,ut to Undotree
+nnoremap <leader>ut :UndotreeToggle<CR>
+
+" Quote words under cursor
+nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
+nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
+
+" Quote current selection
+vnoremap <leader>" <esc>a"<esc>gvo<esc>i"<esc>gvo<esc>ll
+vnoremap <leader>' <esc>a'<esc>gvo<esc>i'<esc>gvo<esc>ll
+
+" Tabularize: Set mappings for common usage
+if exists(":Tabularize")
+  nmap <Leader>t= :Tabularize /=<CR>
+  vmap <Leader>t= :Tabularize /=<CR>
+  nmap <Leader>t: :Tabularize /:\zs<CR>
+  vmap <Leader>t: :Tabularize /:\zs<CR>
+endif
+
+" Unite:
+nnoremap <C-T> :<C-u>Unite -no-split -buffer-name=files -start-insert file_rec/async<cr>
+nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files -start-insert file<cr>
+nnoremap <leader>ft :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=tabopen file_rec/async<cr>
+nnoremap <leader>fs :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=split file_rec/async<cr>
+nnoremap <leader>fv :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=vsplit file_rec/async<cr>
+nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffers -quick-match buffer<cr>
+nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
+nnoremap <leader>ru :<C-u>Unite -no-split -buffer-name=mru -start-insert file_mru<cr>
+nnoremap <leader>yh :<C-u>Unite -no-split -buffer-name=yank_history history/yank<cr>
+
+" Neocomplete
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplete#close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+" Autocomplete at startup is is currently disabled (let
+" g:neocomplete#disable_auto_complete=1) as constant popup menu becomes
+" annoying. This will allow you to manually call the completion popup
+" with <TAB> and will still allow <TAB> to add whitespace if used on an
+" empty line.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ neocomplete#start_manual_complete()
+function! s:check_back_space()
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplete#close_popup()
+inoremap <expr><C-e>  neocomplete#cancel_popup()
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+
+" Neosnippet:
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" }}}
+
+" Filetype specific ------------------------------------------------------- {{{
+
+" Go {{{
+augroup ft_go
+    au!
+
+    au Filetype go setlocal shiftwidth=4 tabstop=4 noexpandtab foldmethod=syntax
+
+    " Load braces for RainbowParentheses
+    au BufNewFile,BufRead *.go RainbowParenthesesLoadBraces
+augroup END
+
+" }}}
+
+" HTML {{{
+augroup ft_html
+    au!
+
+    au FileType html setlocal omnifunc=htmlcomplete#CompleteTags
+augroup END
+
+" }}}
+
+" Markdown {{{
+augroup ft_markdown
+    au!
+
+    au BufNewFile,BufRead *.m*down setlocal filetype=markdown
+    au FileType markdown setlocal foldlevel=1
+    au FileType markdown setlocal spell
+    au FileType markdown setlocal omnifunc=htmlcomplete#CompleteTags
+
+    " Use <localleader>1/2/3 to add headings.
+    au Filetype markdown nnoremap <buffer> <localleader>1 yypVr=:redraw<cr>
+    au Filetype markdown nnoremap <buffer> <localleader>2 yypVr-:redraw<cr>
+    au Filetype markdown nnoremap <buffer> <localleader>3 mzI###<space><ESC>
+augroup END
+
+" }}}
+
+" Python {{{
+augroup ft_python
+    au!
+
+    au Filetype python setlocal shiftwidth=4 softtabstop=4 tabstop=4
+    au FileType python setlocal foldmethod=indent foldlevel=2 foldnestmax=4
+    au FileType python setlocal omnifunc=pythoncomplete#Complete
+augroup END
+
+" }}}
+
+" }}}
+
+" Plugin settings / options ----------------------------------------------- {{{
+
+" Ack
+" Use the_silver_searcher program instead of ack
+let g:ackprg = 'ag --nogroup --nocolor --column'
+
+" Unite.vim
+let g:unite_source_history_yank_enable = 1
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+
+autocmd FileType unite call s:unite_settings()
+function! s:unite_settings()
+  " Enable navigation with control-j and control-k in insert mode
+  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+endfunction
+
+" Neocomplete
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Disable autocomplete / I want to manually call the completion popup.
+let g:neocomplete#disable_auto_complete=1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist'
+    \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+
+" Neosnippet
+" Set if you want snippets other than those provided by neosnippet-snippets.
+" let g:neosnippet#snippets_directory='~/.vim/snippets'
+
+" For snippet_complete marker.
+if has('conceal')
+  set conceallevel=2 concealcursor=i
+endif
+
+" Jedi
+let g:jedi#popup_on_dot = 0 " Don't automatically start completion if you type a dot.
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = "<leader>d"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
+let g:jedi#show_call_signatures = "1"
+
+" }}}
+
+
+" Custom functions -------------------------------------------------------- {{{
+
+" Pulse {{{
+function! PulseCursorLine()
+    let current_window = winnr()
+
+    windo set nocursorline
+    execute current_window . 'wincmd w'
+
+    setlocal cursorline
+
+    redir => old_hi
+        silent execute 'hi CursorLine'
+    redir END
+    let old_hi = split(old_hi, '\n')[0]
+    let old_hi = substitute(old_hi, 'xxx', '', '')
+
+    hi CursorLine guibg=#3a3a3a
+    redraw
+    sleep 20m
+
+    hi CursorLine guibg=#4a4a4a
+    redraw
+    sleep 30m
+
+    hi CursorLine guibg=#3a3a3a
+    redraw
+    sleep 30m
+
+    hi CursorLine guibg=#2a2a2a
+    redraw
+    sleep 20m
+
+    execute 'hi ' . old_hi
+
+    windo set cursorline
+    execute current_window . 'wincmd w'
+endfunction
+
+" }}}
+
+" }}}
