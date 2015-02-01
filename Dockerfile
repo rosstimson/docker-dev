@@ -61,8 +61,8 @@ ADD dotfiles/gitconfig /home/rosstimson/.gitconfig
 ADD dotfiles/gitignore /home/rosstimson/.gitignore
 ADD dotfiles/vimrc /home/rosstimson/.vimrc
 RUN mkdir -p /home/rosstimson/.vim/bundle \
-    && git clone --depth 1 https://github.com/Shougo/neobundle.vim.git /home/rosstimson/.vim/bundle/neobundle.vim \
-    && /home/rosstimson/.vim/bundle/neobundle.vim/bin/neoinstall
+    && git clone --depth 1 https://github.com/Shougo/neobundle.vim.git /home/rosstimson/.vim/bundle/neobundle.vim
+RUN mkdir /home/rosstimson/.z
 
 # Golang setup
 RUN mkdir -p /home/rosstimson/go
@@ -85,4 +85,6 @@ RUN yum clean all && rm -rf /tmp/*
 
 WORKDIR /home/rosstimson
 USER rosstimson
+# Must be run as my user.
+RUN /home/rosstimson/.vim/bundle/neobundle.vim/bin/neoinstall
 CMD ["/bin/zsh"]
