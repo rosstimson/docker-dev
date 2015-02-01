@@ -76,7 +76,6 @@ NeoBundle 'godlygeek/tabular'
 NeoBundle 'akiomik/git-gutter-vim'
 NeoBundle 'mbbill/undotree'
 NeoBundle 'davidhalter/jedi-vim' " Python auto-completion
-NeoBundle 'CSApprox'
 
 " Langs
 NeoBundle 'tpope/vim-markdown'
