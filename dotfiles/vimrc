@@ -406,11 +406,7 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 " Go {{{
 augroup ft_go
     au!
-
     au Filetype go setlocal shiftwidth=4 tabstop=4 noexpandtab foldmethod=syntax
-
-    " Load braces for RainbowParentheses
-    au BufNewFile,BufRead *.go RainbowParenthesesLoadBraces
 augroup END
 
 " }}}
@@ -418,7 +414,6 @@ augroup END
 " HTML {{{
 augroup ft_html
     au!
-
     au FileType html setlocal omnifunc=htmlcomplete#CompleteTags
 augroup END
 
@@ -427,7 +422,6 @@ augroup END
 " Markdown {{{
 augroup ft_markdown
     au!
-
     au BufNewFile,BufRead *.m*down setlocal filetype=markdown
     au FileType markdown setlocal foldlevel=1
     au FileType markdown setlocal spell
@@ -444,7 +438,6 @@ augroup END
 " Python {{{
 augroup ft_python
     au!
-
     au Filetype python setlocal shiftwidth=4 softtabstop=4 tabstop=4
     au FileType python setlocal foldmethod=indent foldlevel=2 foldnestmax=4
     au FileType python setlocal omnifunc=pythoncomplete#Complete
