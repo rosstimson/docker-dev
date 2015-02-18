@@ -83,12 +83,6 @@ setopt share_history # share command history data
 # ------------------------------------------------------------------------- }}}
 # Tools settings ---------------------------------------------------------- {{{
 
-# Python Virtualenv
-if [ -f /usr/bin/virtualenvwrapper_lazy.sh ]; then
-  export WORKON_HOME=$HOME/.virtualenvs
-  source /usr/bin/virtualenvwrapper_lazy.sh
-fi
-
 # pyenv shims and autocompletion
 if _command_exists pyenv; then
   eval "$(pyenv init -)"
