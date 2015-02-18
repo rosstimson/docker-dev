@@ -1,6 +1,9 @@
 FROM fedora
 
-ENV GO_VERSION 1.4.1
+ENV GO_VERSION 1.4.2
+
+ENV PYTHON2_VERSION 2.7.9
+ENV PYTHON3_VERSION 3.4.2
 
 RUN yum install -y automake \
                    bzip2-devel \
@@ -69,13 +72,10 @@ RUN mkdir -p /home/rosstimson/go
 ENV GOROOT /usr/local/go
 ENV GOPATH /home/rosstimson/go
 ENV PATH /home/rosstimson/go/bin:/usr/local/go/bin:$PATH
-RUN go get github.com/tools/godep
-RUN go get github.com/golang/lint/golint
-RUN go get golang.org/x/tools/cmd/goimports
-RUN go get github.com/jstemmer/gotags
-
-# Python setup
-RUN pip install jedi
+RUN go get github.com/tools/godep \
+    && go get github.com/golang/lint/golint \
+    && go get golang.org/x/tools/cmd/goimports \
+    && go get github.com/jstemmer/gotags
 
 # Ensure ownership of $HOME is correct.
 RUN chown -R rosstimson: /home/rosstimson
@@ -85,6 +85,22 @@ RUN yum clean all && rm -rf /tmp/*
 
 WORKDIR /home/rosstimson
 USER rosstimson
+
+# Python setup
+RUN curl -sL https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+# RUN git clone https://github.com/yyuu/pyenv-virtualenv.git /home/rosstimson/.pyenv/plugins/pyenv-virtualenv
+ENV PYENV_ROOT /home/rosstimson/.pyenv
+ENV PATH $PYENV_ROOT/bin:$PATH
+RUN eval "$(pyenv init -)" \
+    && pyenv install $PYTHON2_VERSION \
+    && pyenv install $PYTHON3_VERSION \
+    && pyenv shell $PYTHON2_VERSION \
+    && pip install virtualenv jedi \
+    && pyenv shell $PYTHON3_VERSION \
+    && pip install jedi
+# Set default Python version
+ENV PYENV_VERSION $PYTHON3_VERSION
+
 # Must be run as my user.
 RUN /home/rosstimson/.vim/bundle/neobundle.vim/bin/neoinstall
 CMD ["/bin/zsh"]
