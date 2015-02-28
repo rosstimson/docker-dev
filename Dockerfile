@@ -3,7 +3,7 @@ FROM fedora
 ENV GO_VERSION 1.4.2
 
 ENV PYTHON2_VERSION 2.7.9
-ENV PYTHON3_VERSION 3.4.2
+ENV PYTHON3_VERSION 3.4.3
 
 RUN yum install -y automake \
                    bzip2-devel \
