@@ -4,88 +4,43 @@
 " My Vim preference
 " Maintained by Ross Timson <ross@rosstimson.com>
 "
-" I like to build the latest Vim from src with the following:
-"
-"     ./configure --with-features=huge \
-"                 --prefix=/usr/local \
-"                 --with-x \
-"                 --enable-gui=yes \
-"                 --enable-perlinterp \
-"                 --enable-pythoninterp \
-"                 --enable-rubyinterp \
-"                 --enable-xim \
-"                 --enable-multibyte \
-"                 --with-tlib=ncurses \
-"                 --enable-fontset \
-"                 --enable-cscope \
-"                 --disable-tclinterp \
-"                 --disable-netbeans \
-"                 --with-compiledby="Ross Timson <ross@rosstimson.com>"
-"
-" To start vim without using this .vimrc file, use:
-"     vim -u NORC
-"
-" To start vim without loading any .vimrc or plugins, use:
-"     vim -u NONE
-"
-
-if  has('vim_starting')
-  set nocompatible  " be iMproved (MUST be first)
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
-endif
-
-" Use NeoBundle for installing / managing Vim scripts
-call neobundle#begin(expand('~/.vim/bundle/'))
-
 " }}}
 
 " Bundles ----------------------------------------------------------------- {{{
 
-" Let NeoBundle manage NeoBundle (ooh how meta)
-NeoBundleFetch 'Shougo/neobundle.vim'
+" Use vim-plug (https://github.com/junegunn/vim-plug) to manage plugins.
+call plug#begin('~/.vim/plugged')
 
-let vimproc_updcmd = has('win64') ?
-    \ 'tools\\update-dll-mingw 64' : 'tools\\update-dll-mingw 32'
-execute "NeoBundle 'Shougo/vimproc.vim'," . string({
-    \ 'build' : {
-    \     'windows' : vimproc_updcmd,
-    \     'cygwin' : 'make -f make_cygwin.mak',
-    \     'mac' : 'make -f make_mac.mak',
-    \     'unix' : 'make -f make_unix.mak',
-    \    },
-    \ })
+" Make sure you use single quotes
 
 " Tools
-NeoBundle 'tpope/vim-git'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'tpope/vim-surround'
-NeoBundle 'tpope/vim-commentary'
-NeoBundle 'tpope/vim-repeat'
-NeoBundle 'tpope/vim-eunuch'
-NeoBundle 'mileszs/ack.vim'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'Shougo/neocomplete.vim'
-NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'majutsushi/tagbar'
-NeoBundle 'ZoomWin'
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'akiomik/git-gutter-vim'
-NeoBundle 'mbbill/undotree'
-NeoBundle 'davidhalter/jedi-vim' " Python auto-completion
+Plug 'tpope/vim-git'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-eunuch'
+Plug 'mileszs/ack.vim'
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'bling/vim-airline'
+Plug 'majutsushi/tagbar'
+Plug 'godlygeek/tabular'
+Plug 'akiomik/git-gutter-vim'
+Plug 'mbbill/undotree'
+Plug 'davidhalter/jedi-vim'
 
 " Langs
-NeoBundle 'tpope/vim-markdown'
-NeoBundle 'fatih/vim-go'
+Plug 'tpope/vim-markdown'
+Plug 'fatih/vim-go'
 
 " Colour schemes
-NeoBundle 'vim-scripts/Colour-Sampler-Pack'
+Plug 'vim-scripts/Colour-Sampler-Pack'
+Plug 'chriskempson/base16-vim'
 
-" End neobundle shenanigans
-call neobundle#end()
+" End vim-plug shenanigans
+call plug#end()
 
 " }}}
 
@@ -93,7 +48,6 @@ call neobundle#end()
 " Basic settings ---------------------------------------------------------- {{{
 
 filetype plugin indent on " Required! Enable detection, plugins and indenting
-NeoBundleCheck            " Installation check via Neobundle
 set number                " Show line number
 set ruler                 " Show line and column numbers
 syntax enable             " Turn on syntax highlighting
@@ -141,11 +95,11 @@ set spelllang=en_gb       " Let's use real English
 set omnifunc=syntaxcomplete#Complete
 
 set t_Co=256              " Pretty colours
+let base16colorspace=256  " Access colors present in 256 colorspace
 set background=dark       " Setting background to dark
 
-" Setting default colourscheme for terminal vim.  For this to look good it
-" should match the Xorg colours specified in ~/.Xresources and ~/.Xcolors
-colorscheme wombat256
+" Setting default colourscheme
+silent! colorscheme base16-atelierlakeside
 
 " }}}
 
@@ -262,11 +216,11 @@ nnoremap k gk
 nnoremap <C-e> 3<C-e>
 nnoremap <C-y> 3<C-y>
 
-" Easy window navigation (instead of ctrl-w then j it's just ctrl-j)
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+" Easy buffer and tab switching
+nnoremap <C-J> :bnext<CR>
+nnoremap <C-K> :bprev<CR>
+nnoremap <C-L> :tabn<CR>
+nnoremap <C-H> :tabp<CR>
 
 " }}}
 
@@ -348,52 +302,6 @@ if exists(":Tabularize")
   vmap <Leader>t: :Tabularize /:\zs<CR>
 endif
 
-" Unite:
-nnoremap <C-T> :<C-u>Unite -no-split -buffer-name=files -start-insert file_rec/async<cr>
-nnoremap <leader>f :<C-u>Unite -no-split -buffer-name=files -start-insert file<cr>
-nnoremap <leader>ft :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=tabopen file_rec/async<cr>
-nnoremap <leader>fs :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=split file_rec/async<cr>
-nnoremap <leader>fv :<C-u>Unite -no-split -buffer-name=files -start-insert -default-action=vsplit file_rec/async<cr>
-nnoremap <leader>b :<C-u>Unite -no-split -buffer-name=buffers -quick-match buffer<cr>
-nnoremap <leader>o :<C-u>Unite -no-split -buffer-name=outline -start-insert outline<cr>
-nnoremap <leader>ru :<C-u>Unite -no-split -buffer-name=mru -start-insert file_mru<cr>
-nnoremap <leader>yh :<C-u>Unite -no-split -buffer-name=yank_history history/yank<cr>
-
-" Neocomplete
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-" Autocomplete at startup is is currently disabled (let
-" g:neocomplete#disable_auto_complete=1) as constant popup menu becomes
-" annoying. This will allow you to manually call the completion popup
-" with <TAB> and will still allow <TAB> to add whitespace if used on an
-" empty line.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ neocomplete#start_manual_complete()
-function! s:check_back_space()
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
-
-"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
-
 " Neosnippet:
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -453,41 +361,11 @@ augroup END
 " Use the_silver_searcher program instead of ack
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
-" Unite.vim
-let g:unite_source_history_yank_enable = 1
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-
-autocmd FileType unite call s:unite_settings()
-function! s:unite_settings()
-  " Enable navigation with control-j and control-k in insert mode
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-endfunction
-
-" Neocomplete
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Disable autocomplete / I want to manually call the completion popup.
-let g:neocomplete#disable_auto_complete=1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
 " Define dictionary.
 let g:neocomplete#sources#dictionary#dictionaries = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist'
     \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')

@@ -3,9 +3,10 @@ FROM fedora
 ENV GO_VERSION 1.4.2
 
 ENV PYTHON2_VERSION 2.7.9
-ENV PYTHON3_VERSION 3.4.2
+ENV PYTHON3_VERSION 3.4.3
 
-RUN yum install -y automake \
+RUN yum install -y autoconf \
+                   automake \
                    bzip2-devel \
                    cmake \
                    ctags \
@@ -13,18 +14,21 @@ RUN yum install -y automake \
                    docker-io \
                    expat-devel \
                    gcc \
+                   gcc-c++ \
                    gdbm-devel \
                    git \
                    libffi-devel \
+                   libtool \
                    libxml2-devel \
                    libxslt-devel \
                    libyaml-devel \
-                   luajit-devel \
                    make \
                    mercurial \
                    ncurses-devel \
                    openssl-devel \
                    par \
+                   patch \
+                   pkgconfig \
                    python \
                    python-pip \
                    readline-devel \
@@ -34,6 +38,8 @@ RUN yum install -y automake \
                    the_silver_searcher \
                    tmux \
                    tree \
+                   unzip \
+                   vim \
                    wget \
                    zlib-devel \
                    zsh
@@ -41,14 +47,14 @@ RUN yum install -y automake \
 # Install go
 RUN curl -s https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | tar -C /usr/local -zx
 
-# Install Vim from source
+# Install Neovim from source
 RUN cd /tmp \
-       && hg clone https://vim.googlecode.com/hg/ vim \
-       && cd vim \
-       && ./configure --with-features=huge --prefix /usr/local --with-tlib=ncurses --enable-pythoninterp --enable-multibyte --enable-luainterp --with-luajit --disable-tclinterp --disable-netbeans --with-compiledby='Ross Timson <ross@rosstimson.com>' \
+       && git clone --depth 1 https://github.com/neovim/neovim.git \
+       && cd neovim \
+       && echo "" > cmake/GenerateHelptags.cmake \
        && make \
        && make install \
-       && rm -rf /tmp/vim
+       && rm -rf /tmp/neovim
 
 # Create my user
 RUN useradd rosstimson --uid 1000 --shell /bin/zsh
@@ -63,9 +69,12 @@ ADD dotfiles/tmux.conf /home/rosstimson/.tmux.conf
 ADD dotfiles/gitconfig /home/rosstimson/.gitconfig
 ADD dotfiles/gitignore /home/rosstimson/.gitignore
 ADD dotfiles/vimrc /home/rosstimson/.vimrc
-RUN mkdir -p /home/rosstimson/.vim/bundle \
-    && git clone --depth 1 https://github.com/Shougo/neobundle.vim.git /home/rosstimson/.vim/bundle/neobundle.vim
+RUN ln -s /home/rosstimson/.vimrc /home/rosstimson/.nvimrc
+RUN ln -s /home/rosstimson/.vim /home/rosstimson/.nvim
+RUN curl -fLo /home/rosstimson/.vim/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN touch /home/rosstimson/.z
+RUN git clone --depth 1 https://github.com/chriskempson/base16-shell.git /home/rosstimson/.base16-shell
 
 # Golang setup
 RUN mkdir -p /home/rosstimson/go
@@ -75,7 +84,8 @@ ENV PATH /home/rosstimson/go/bin:/usr/local/go/bin:$PATH
 RUN go get github.com/tools/godep \
     && go get github.com/golang/lint/golint \
     && go get golang.org/x/tools/cmd/goimports \
-    && go get github.com/jstemmer/gotags
+    && go get github.com/jstemmer/gotags \
+    && go get github.com/nsf/gocode
 
 # Ensure ownership of $HOME is correct.
 RUN chown -R rosstimson: /home/rosstimson
@@ -101,6 +111,7 @@ RUN eval "$(pyenv init -)" \
 # Set default Python version
 ENV PYENV_VERSION $PYTHON3_VERSION
 
-# Must be run as my user.
-RUN /home/rosstimson/.vim/bundle/neobundle.vim/bin/neoinstall
+# Must be run as my user to read
+RUN vim +PlugInstall +qall
+
 CMD ["/bin/zsh"]
