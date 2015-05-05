@@ -71,8 +71,6 @@ ADD dotfiles/gitignore /home/rosstimson/.gitignore
 ADD dotfiles/vimrc /home/rosstimson/.vimrc
 RUN ln -s /home/rosstimson/.vimrc /home/rosstimson/.nvimrc
 RUN ln -s /home/rosstimson/.vim /home/rosstimson/.nvim
-RUN curl -fLo /home/rosstimson/.vim/autoload/plug.vim --create-dirs \
-      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN touch /home/rosstimson/.z
 RUN git clone --depth 1 https://github.com/chriskempson/base16-shell.git /home/rosstimson/.base16-shell
 
@@ -111,7 +109,9 @@ RUN eval "$(pyenv init -)" \
 # Set default Python version
 ENV PYENV_VERSION $PYTHON3_VERSION
 
-# Must be run as my user to read
+# Must be run as my user to fix weird permissions issue and to read .vimrc
+RUN curl -fLo /home/rosstimson/.vim/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN vim +PlugInstall +qall
 
 CMD ["/bin/zsh"]
