@@ -5,6 +5,8 @@ ENV GO_VERSION 1.4.2
 ENV PYTHON2_VERSION 2.7.9
 ENV PYTHON3_VERSION 3.4.3
 
+ENV FZF_VERSION 0.9.11
+
 RUN yum install -y autoconf \
                    automake \
                    bzip2-devel \
@@ -73,6 +75,12 @@ RUN ln -s /home/rosstimson/.vimrc /home/rosstimson/.nvimrc
 RUN ln -s /home/rosstimson/.vim /home/rosstimson/.nvim
 RUN touch /home/rosstimson/.z
 RUN git clone --depth 1 https://github.com/chriskempson/base16-shell.git /home/rosstimson/.base16-shell
+
+# Install fzf (https://github.com/junegunn/fzf)
+RUN git clone --depth 1 https://github.com/junegunn/fzf.git /home/rosstimson/.fzf \
+    && curl -sfL https://github.com/junegunn/fzf-bin/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tgz | tar -C /home/rosstimson/.fzf/bin -xz \
+    && chmod +x /home/rosstimson/.fzf/bin/fzf-${FZF_VERSION}-linux_amd64 \
+    && ln -s /home/rosstimson/.fzf/bin/fzf-${FZF_VERSION}-linux_amd64 /home/rosstimson/.fzf/bin/fzf
 
 # Golang setup
 RUN mkdir -p /home/rosstimson/go
