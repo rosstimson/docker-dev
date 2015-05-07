@@ -365,17 +365,6 @@ augroup END
 " Use the_silver_searcher program instead of ack
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist'
-    \ }
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-
 " Neosnippet
 " Set if you want snippets other than those provided by neosnippet-snippets.
 " let g:neosnippet#snippets_directory='~/.vim/snippets'
