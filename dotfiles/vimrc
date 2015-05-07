@@ -94,6 +94,7 @@ set pastetoggle=<F2>      " When in insert mode, press <F2> to go to
 au VimResized * :wincmd = " Resize splits when Vim is resized
 set spelllang=en_gb       " Let's use real English
 set omnifunc=syntaxcomplete#Complete
+set completeopt-=preview  " Disable scratch/preview split window for omnicompletions
 
 set t_Co=256              " Pretty colours
 let base16colorspace=256  " Access colors present in 256 colorspace
