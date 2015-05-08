@@ -320,6 +320,18 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 augroup ft_go
     au!
     au Filetype go setlocal shiftwidth=4 tabstop=4 noexpandtab foldmethod=syntax
+
+    " vim-go mappings
+    au FileType go nmap <leader>r <Plug>(go-run)
+    au FileType go nmap <leader>b <Plug>(go-build)
+    au FileType go nmap <leader>t <Plug>(go-test)
+    au FileType go nmap <leader>c <Plug>(go-coverage)
+    au FileType go nmap <Leader>ds <Plug>(go-def-split)
+    au FileType go nmap <Leader>dv <Plug>(go-def-vertical)
+    au FileType go nmap <Leader>dt <Plug>(go-def-tab)
+    " gm for go manual, gd clashed with Fugitive git diff mapping.
+    au FileType go nmap <Leader>gm <Plug>(go-doc) 
+    au FileType go nmap <Leader>gmv <Plug>(go-doc-vertical)
 augroup END
 
 " }}}

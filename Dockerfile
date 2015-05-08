@@ -87,11 +87,16 @@ RUN mkdir -p /home/rosstimson/go
 ENV GOROOT /usr/local/go
 ENV GOPATH /home/rosstimson/go
 ENV PATH /home/rosstimson/go/bin:/usr/local/go/bin:$PATH
-RUN go get github.com/tools/godep \
-    && go get github.com/golang/lint/golint \
+RUN go get github.com/nsf/gocode \
     && go get golang.org/x/tools/cmd/goimports \
+    && go get github.com/rogpeppe/godef \
+    && go get golang.org/x/tools/cmd/oracle \
+    && go get golang.org/x/tools/cmd/gorename \
+    && go get github.com/golang/lint/golint \
+    && go get github.com/kisielk/errcheck \
     && go get github.com/jstemmer/gotags \
-    && go get github.com/nsf/gocode
+    && go get github.com/tools/godep \
+    && go get github.com/github/hub
 
 # Ensure ownership of $HOME is correct.
 RUN chown -R rosstimson: /home/rosstimson
