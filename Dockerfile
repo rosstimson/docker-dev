@@ -96,6 +96,7 @@ RUN go get github.com/nsf/gocode \
     && go get github.com/kisielk/errcheck \
     && go get github.com/jstemmer/gotags \
     && go get github.com/tools/godep \
+    && go get github.com/constabulary/gb/... \
     && go get github.com/github/hub
 
 # Ensure ownership of $HOME is correct.
