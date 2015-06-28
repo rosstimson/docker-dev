@@ -2,12 +2,12 @@ FROM fedora
 
 ENV GO_VERSION 1.4.2
 
-ENV PYTHON2_VERSION 2.7.9
+ENV PYTHON2_VERSION 2.7.10
 ENV PYTHON3_VERSION 3.4.3
 
-ENV FZF_VERSION 0.9.11
+ENV FZF_VERSION 0.10.0
 
-RUN yum install -y autoconf \
+RUN dnf install -y autoconf \
                    automake \
                    bzip2-devel \
                    cmake \
@@ -103,7 +103,7 @@ RUN go get github.com/nsf/gocode \
 RUN chown -R rosstimson: /home/rosstimson
 
 # Cleanup
-RUN yum clean all && rm -rf /tmp/*
+RUN dnf clean all && rm -rf /tmp/*
 
 WORKDIR /home/rosstimson
 USER rosstimson
@@ -119,7 +119,7 @@ RUN eval "$(pyenv init -)" \
     && pyenv shell $PYTHON2_VERSION \
     && pip install virtualenv jedi \
     && pyenv shell $PYTHON3_VERSION \
-    && pip install jedi
+    && pip install jedi neovim
 # Set default Python version
 ENV PYENV_VERSION $PYTHON3_VERSION
 
