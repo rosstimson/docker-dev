@@ -5,7 +5,7 @@ ENV GO_VERSION 1.4.2
 ENV PYTHON2_VERSION 2.7.10
 ENV PYTHON3_VERSION 3.4.3
 
-ENV FZF_VERSION 0.10.0
+ENV FZF_VERSION 0.10.1
 
 RUN dnf install -y autoconf \
                    automake \
